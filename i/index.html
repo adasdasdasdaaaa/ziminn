@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>パチンコチャレンジ</title>
+  <title>大金スロットチャレンジ</title>
   <style>
     body, html {
       margin: 0;
@@ -11,6 +11,8 @@
       font-family: sans-serif;
       overflow: hidden;
     }
+
+    /* タイトル画面 */
     #titleScreen {
       position: absolute;
       width: 100%;
@@ -29,22 +31,45 @@
       font-weight: bold;
       text-shadow: 2px 2px 4px black;
     }
+
+    /* ゲーム画面 */
     #gameScreen {
       display: none;
-      text-align: center;
-      padding-top: 50px;
-      background-color: #f0f0f0;
       height: 100%;
+      display: flex;
+      flex-direction: row;
     }
-    button {
-      font-size: 1.5em;
-      padding: 10px 20px;
-      margin: 10px;
+
+    /* メインエリア */
+    #mainArea {
+      flex: 1;
+      background-color: #f0f0f0;
+      padding: 50px;
+      text-align: center;
+    }
+
+    /* サイドバー */
+    #sidebar {
+      width: 200px;
+      background-color: #ddd;
+      padding: 20px;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+    }
+    #sidebar h2 {
+      text-align: center;
+    }
+    #sidebar button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 1.2em;
+      padding: 10px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
+
   <!-- タイトル画面 -->
   <div id="titleScreen" onclick="startGame()">
     <div id="titleText">大金スロットチャレンジ</div>
@@ -53,11 +78,19 @@
 
   <!-- ゲーム画面 -->
   <div id="gameScreen">
-    <h1>パチンコ選択</h1>
-    <p id="money">所持金: 1000円</p>
-    <button onclick="playSlot3()">3円パチンコ</button>
-    <button onclick="playSlot100()">100円パチンコ</button>
-    <p id="result"></p>
+    <!-- メイン表示エリア -->
+    <div id="mainArea">
+      <h1>パチンコチャレンジ</h1>
+      <p id="money">所持金: 1000円</p>
+      <p id="result"></p>
+    </div>
+
+    <!-- 右端サイドバー -->
+    <div id="sidebar">
+      <h2>パチンコ一覧</h2>
+      <button onclick="playSlot3()">3円パチンコ</button>
+      <button onclick="playSlot100()">100円パチンコ</button>
+    </div>
   </div>
 
   <script>
@@ -66,7 +99,7 @@
 
     function startGame() {
       document.getElementById("titleScreen").style.display = "none";
-      document.getElementById("gameScreen").style.display = "block";
+      document.getElementById("gameScreen").style.display = "flex";
       updateMoney();
     }
 
@@ -127,5 +160,7 @@
     // 初期表示
     updateMoney();
   </script>
+
 </body>
 </html>
+
