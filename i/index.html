@@ -1,165 +1,113 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>自民党の復活</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
+<meta charset="UTF-8">
+<title>自民党の復活 - スロット演出付き</title>
+<style>
+  body, html {
+    margin: 0; padding: 0; font-family: sans-serif; height: 100%;
+  }
 
-    /* タイトル画面 */
-    #titleScreen {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: url('https://th.bing.com/th/id/OIP.8qW0vDYC-GeJumzWmvYn6AHaHa?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3') no-repeat center center;
-      background-size: cover;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    #titleText {
-      color: red;
-      font-size: 4em;
-      font-weight: bold;
-      text-shadow: 2px 2px 4px black;
-    }
+  #titleScreen {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: url('https://th.bing.com/th/id/OIP.8qW0vDYC-GeJumzWmvYn6AHaHa?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3') no-repeat center center;
+    background-size: cover;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    cursor: pointer;
+  }
+  #titleText { color:red; font-size:4em; font-weight:bold; text-shadow:2px 2px 4px black; }
 
-    /* ゲーム画面 */
-    #gameScreen {
-      display: none;
-      height: 100%;
-      display: flex;
-      flex-direction: row;
-    }
-
-    /* メインエリア */
-    #mainArea {
-      flex: 1;
-      background-color: #f0f0f0;
-      padding: 50px;
-      text-align: center;
-    }
-
-    /* サイドバー */
-    #sidebar {
-      width: 200px;
-      background-color: #ddd;
-      padding: 20px;
-      box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-    }
-    #sidebar h2 {
-      text-align: center;
-    }
-    #sidebar button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      font-size: 1.2em;
-      padding: 10px;
-      cursor: pointer;
-    }
-  </style>
+  #gameScreen { display:none; height:100%; display:flex; flex-direction:column; align-items:center; padding-top:50px; background:#f0f0f0; }
+  #money { font-size:1.5em; margin-bottom:20px; }
+  #slotDisplay { font-size:3em; margin:20px; height:60px; }
+  button { font-size:1.2em; padding:10px 20px; margin:5px; cursor:pointer; }
+</style>
 </head>
 <body>
 
-  <!-- タイトル画面 -->
-  <div id="titleScreen" onclick="startGame()">
-    <div id="titleText">自民党の復活</div>
-    <p style="color:white; text-shadow:1px 1px 3px black;">タップしてスタート</p>
-  </div>
+<div id="titleScreen" onclick="startGame()">
+  <div id="titleText">自民党の復活</div>
+  <p style="color:white; text-shadow:1px 1px 3px black;">タップしてスタート</p>
+</div>
 
-  <!-- ゲーム画面 -->
-  <div id="gameScreen">
-    <!-- メイン表示エリア -->
-    <div id="mainArea">
-      <h1>パチンコチャレンジ</h1>
-      <p id="money">所持金: 1000円</p>
-      <p id="result"></p>
-    </div>
+<div id="gameScreen">
+  <p id="money">所持金: 1000円</p>
+  <div id="slotDisplay">🍒 🍒 🍒</div>
+  <button id="startButton" onclick="startSlot()">回す</button>
+  <button id="stopButton" onclick="stopSlot()">
+    <img src="https://tse2.mm.bing.net/th/id/OIP.iHtROv6QVl9NQDa2RHXl3QHaFj?rs=1&pid=ImgDetMain&o=7&rm=3" style="height:40px;">
+  </button>
+  <p id="result"></p>
+</div>
 
-    <!-- 右端サイドバー -->
-    <div id="sidebar">
-      <h2>パチンコ一覧</h2>
-      <button onclick="playSlot3()">3円パチンコ</button>
-      <button onclick="playSlot100()">100円パチンコ</button>
-    </div>
-  </div>
+<script>
+let money = 1000;
+const WIN_AMOUNT = 1000000;
+let slotInterval = null;
+let currentSlot = ["🍒","🍋","🔔","🍉","7"];
+let spinning = false;
 
-  <script>
-    let money = 1000;
-    const WIN_AMOUNT = 1000000; // 100万円
+function startGame() {
+  document.getElementById("titleScreen").style.display = "none";
+  document.getElementById("gameScreen").style.display = "flex";
+  updateMoney();
+}
 
-    function startGame() {
-      document.getElementById("titleScreen").style.display = "none";
-      document.getElementById("gameScreen").style.display = "flex";
-      updateMoney();
-    }
+// 更新所持金
+function updateMoney() {
+  document.getElementById("money").innerText = "所持金: " + money + "円";
+}
 
-    function updateMoney() {
-      document.getElementById("money").innerText = "所持金: " + money + "円";
-    }
+// スロット開始
+function startSlot() {
+  if (spinning) return; // すでに回ってる
+  if (money < 3) { document.getElementById("result").innerText="お金が足りません！"; return; }
+  money -= 3;
+  updateMoney();
+  spinning = true;
+  document.getElementById("result").innerText="回転中…自分で停止ボタンを押してください";
+  slotInterval = setInterval(() => {
+    const r1 = currentSlot[Math.floor(Math.random()*currentSlot.length)];
+    const r2 = currentSlot[Math.floor(Math.random()*currentSlot.length)];
+    const r3 = currentSlot[Math.floor(Math.random()*currentSlot.length)];
+    document.getElementById("slotDisplay").innerText = `${r1} ${r2} ${r3}`;
+  }, 100);
+}
 
-    function checkGameEnd() {
-      if (money >= WIN_AMOUNT) {
-        alert("🎉 自民党復活！あなたの勝利です！");
-        resetGame();
-      } else if (money < 0) {
-        alert("💥 借金で崩壊…ゲームオーバー");
-        resetGame();
-      }
-    }
+// スロット停止
+function stopSlot() {
+  if (!spinning) return;
+  clearInterval(slotInterval);
+  spinning = false;
 
-    function playSlot3() {
-      if (money < 3) {
-        document.getElementById("result").innerText = "お金が足りません！";
-        return;
-      }
-      money -= 3;
-      if (Math.random() < 0.3) {
-        money += 6;
-        document.getElementById("result").innerText = "3円パチンコ勝ち！ +3円";
-      } else {
-        document.getElementById("result").innerText = "3円パチンコ負け… -3円";
-      }
-      updateMoney();
-      checkGameEnd();
-    }
+  // 勝ち判定：30%の確率
+  if (Math.random() < 0.3) {
+    money += 6;
+    document.getElementById("result").innerText="勝ち！ +3円";
+  } else {
+    document.getElementById("result").innerText="負け… -3円";
+  }
+  updateMoney();
+  checkGameEnd();
+}
 
-    function playSlot100() {
-      if (money < 100) {
-        document.getElementById("result").innerText = "お金が足りません！";
-        return;
-      }
-      money -= 100;
-      if (Math.random() < 0.6) {
-        money += 300;
-        document.getElementById("result").innerText = "100円パチンコ勝ち！ +200円";
-      } else {
-        document.getElementById("result").innerText = "100円パチンコ負け… -100円";
-      }
-      updateMoney();
-      checkGameEnd();
-    }
+// ゲーム終了判定
+function checkGameEnd() {
+  if (money >= WIN_AMOUNT) { alert("🎉 自民党復活！あなたの勝利です！"); resetGame(); }
+  else if (money < 0) { alert("💥 借金で崩壊…ゲームオーバー"); resetGame(); }
+}
 
-    function resetGame() {
-      money = 1000;
-      updateMoney();
-      document.getElementById("result").innerText = "";
-      document.getElementById("gameScreen").style.display = "none";
-      document.getElementById("titleScreen").style.display = "flex";
-    }
-
-    // 初期表示
-    updateMoney();
-  </script>
+// リセット
+function resetGame() {
+  money=1000;
+  updateMoney();
+  document.getElementById("result").innerText="";
+  document.getElementById("slotDisplay").innerText="🍒 🍒 🍒";
+  document.getElementById("gameScreen").style.display="none";
+  document.getElementById("titleScreen").style.display="flex";
+}
+</script>
 
 </body>
 </html>
