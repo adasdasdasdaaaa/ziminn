@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>自民党の復活</title>
+  <title>パチンコチャレンジ</title>
   <style>
     body, html {
       margin: 0;
@@ -15,7 +15,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      background: url('https://th.bing.com/th/id/OIP.8qW0vDYC-GeJumzWmvYn6AHaHa?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3') no-repeat center center;
+      background: url('./images/background.jpg') no-repeat center center;
       background-size: cover;
       display: flex;
       flex-direction: column;
@@ -39,7 +39,7 @@
     button {
       font-size: 1.5em;
       padding: 10px 20px;
-      margin-top: 20px;
+      margin: 10px;
       cursor: pointer;
     }
   </style>
@@ -47,15 +47,16 @@
 <body>
   <!-- タイトル画面 -->
   <div id="titleScreen" onclick="startGame()">
-    <div id="titleText">自民党の復活</div>
+    <div id="titleText">大金スロットチャレンジ</div>
     <p style="color:white; text-shadow:1px 1px 3px black;">タップしてスタート</p>
   </div>
 
   <!-- ゲーム画面 -->
   <div id="gameScreen">
-    <h1>3円パチンコ</h1>
+    <h1>パチンコ選択</h1>
     <p id="money">所持金: 1000円</p>
-    <button onclick="playSlot()">打つ</button>
+    <button onclick="playSlot3()">3円パチンコ</button>
+    <button onclick="playSlot100()">100円パチンコ</button>
     <p id="result"></p>
   </div>
 
@@ -69,38 +70,50 @@
       updateMoney();
     }
 
-    function playSlot() {
-      if (money < 3) {
-        document.getElementById("result").innerText = "お金が足りません！";
-        return;
-      }
-
-      money -= 3; // 消費
-
-      // 勝率30%
-      if (Math.random() < 0.3) {
-        money += 6;
-        document.getElementById("result").innerText = "勝ち！ +3円";
-      } else {
-        document.getElementById("result").innerText = "負け… -3円";
-      }
-
-      updateMoney();
-      checkGameEnd();
-    }
-
     function updateMoney() {
       document.getElementById("money").innerText = "所持金: " + money + "円";
     }
 
     function checkGameEnd() {
       if (money >= WIN_AMOUNT) {
-        alert("🎉 自民党復活！あなたの勝利です！");
+        alert("🎉 勝利！100万円達成！");
         resetGame();
       } else if (money < 0) {
         alert("💥 借金で崩壊…ゲームオーバー");
         resetGame();
       }
+    }
+
+    function playSlot3() {
+      if (money < 3) {
+        document.getElementById("result").innerText = "お金が足りません！";
+        return;
+      }
+      money -= 3;
+      if (Math.random() < 0.3) {
+        money += 6;
+        document.getElementById("result").innerText = "3円パチンコ勝ち！ +3円";
+      } else {
+        document.getElementById("result").innerText = "3円パチンコ負け… -3円";
+      }
+      updateMoney();
+      checkGameEnd();
+    }
+
+    function playSlot100() {
+      if (money < 100) {
+        document.getElementById("result").innerText = "お金が足りません！";
+        return;
+      }
+      money -= 100;
+      if (Math.random() < 0.6) {
+        money += 300;
+        document.getElementById("result").innerText = "100円パチンコ勝ち！ +200円";
+      } else {
+        document.getElementById("result").innerText = "100円パチンコ負け… -100円";
+      }
+      updateMoney();
+      checkGameEnd();
     }
 
     function resetGame() {
@@ -110,6 +123,9 @@
       document.getElementById("gameScreen").style.display = "none";
       document.getElementById("titleScreen").style.display = "flex";
     }
+
+    // 初期表示
+    updateMoney();
   </script>
 </body>
 </html>
